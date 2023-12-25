@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cricket Game</h1>
+    <button id="bat">Bat</button>
+    <button id="ball">Ball</button>
+    <button id="wicket">Wicket</button>
+    <button id="reset">Reset</button>
+  </body>
+  <script>
+    let score;
+    let scoreStr = localStorage.getItem("score");
+    function resetScore(scoreStr) {
+      if (!scoreStr) {
+        score = {
+          win: 0,
+          lose: 0,
+          draw: 0,
+        };
+      } else {
+        score = JSON.parse(scoreStr);
+      }
+    }
+    resetScore(scoreStr);
+    document.body.addEventListener("click", function (e) {
+      if (e.target.localName === "button") {
+        // console.log(e.target.localName);
+        // console.log(e.target.textContent);
+        let userChoice = e.target.textContent;
+        if (
+          userChoice === "Bat" ||
+          userChoice === "Ball" ||
+          userChoice === "Wicket"
+        ) {
+          let computerChoice = generateComputerChoice();
+          let winner = evaluateResult(userChoice, computerChoice);
+          displayResult(userChoice, computerChoice, winner, score);
+          //   console.log(userChoice);
+          //   console.log(computerChoice);
+          //   console.log(score);
+        } else if (userChoice === "Reset") {
+          localStorage.clear();
+          resetScore();
+        }
+      }
+    });
+    function generateComputerChoice() {
+      let computerChoice = Math.floor(Math.random() * 3 + 1);
+      //   console.log(computerChoice);
+      if (computerChoice === 1) {
+        return "Bat";
+      } else if (computerChoice === 2) {
+        return "Ball";
+      } else {
+        return "Wicket";
+      }
+    }
+    function evaluateResult(userChoice, computerChoice) {
+      if (userChoice === computerChoice) {
+        score.draw++;
+        localStorage.setItem("score", JSON.stringify(score));
+        return `Match is Draw`;
+      } else if (userChoice === "Bat") {
+        if (computerChoice === "Ball") {
+          score.win++;
+          localStorage.setItem("score", JSON.stringify(score));
+          return "User has won";
+        } else if (computerChoice === "Wicket") {
+          score.lose++;
+          localStorage.setItem("score", JSON.stringify(score));
+          return "Computer has won";
+        }
+      } else if (userChoice === "Ball") {
+        if (computerChoice === "Wicket") {
+          score.win++;
+          localStorage.setItem("score", JSON.stringify(score));
+          return "User has won";
+        } else if (computerChoice === "Bat") {
+          score.lose++;
+          localStorage.setItem("score", JSON.stringify(score));
+          return "Computer has won";
+        }
+      } else if (userChoice === "Wicket") {
+        if (computerChoice === "Bat") {
+          score.win++;
+          localStorage.setItem("score", JSON.stringify(score));
+          return "User has won";
+        } else if (computerChoice === "Ball") {
+          score.lose++;
+          localStorage.setItem("score", JSON.stringify(score));
+          return "Computer has won";
+        }
+      }
+    }
+    function displayResult(userChoice, computerChoice, winner, score) {
+      alert(
+        `User has chosen ${userChoice}\nComputer has chosen ${computerChoice} \nResult : ${winner}\n Win: ${score.win}, Lose: ${score.lose}, Draw: ${score.draw}`
+      );
+    }
+  </script>
+</html>
